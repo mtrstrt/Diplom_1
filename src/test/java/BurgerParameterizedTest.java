@@ -29,7 +29,7 @@ public class BurgerParameterizedTest {
     }
 
     @Test
-    public void TestGetPriceDependsOnBunPrice() {
+    public void getPriceDependsOnBunPrice() {
         Bun bun = Mockito.mock(Bun.class);
         Mockito.when(bun.getPrice()).thenReturn(bunPrice);
         Burger burger = new Burger();

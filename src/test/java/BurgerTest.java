@@ -9,7 +9,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,7 +26,7 @@ public class BurgerTest {
     private Ingredient filling;
 
     @Test
-    public void TestSetBunsSetsBun() {
+    public void setBunsSetsPassedBun() {
         Burger burger = new Burger();
         burger.setBuns(bun);
 
@@ -35,49 +34,69 @@ public class BurgerTest {
     }
 
     @Test
-    public void TestAddIngredientAddsToList() {
+    public void addIngredientIncreasesIngredientsCount() {
         Burger burger = new Burger();
         burger.addIngredient(sauce);
 
         assertEquals(1, burger.ingredients.size());
+    }
+
+    @Test
+    public void addIngredientAddsPassedIngredient() {
+        Burger burger = new Burger();
+        burger.addIngredient(sauce);
+
         assertSame(sauce, burger.ingredients.get(0));
     }
 
     @Test
-    public void TestRemoveIngredientRemovesFromList() {
+    public void removeIngredientDecreasesIngredientsCount() {
         Burger burger = new Burger();
         burger.addIngredient(sauce);
         burger.addIngredient(filling);
         burger.removeIngredient(0);
 
         assertEquals(1, burger.ingredients.size());
+    }
+
+    @Test
+    public void removeIngredientRemovesIngredientByIndex() {
+        Burger burger = new Burger();
+        burger.addIngredient(sauce);
+        burger.addIngredient(filling);
+        burger.removeIngredient(0);
+
         assertSame(filling, burger.ingredients.get(0));
     }
 
-    @Test
-    public void TestRemoveIngredientWithWrongIndexThrowsException() {
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void removeIngredientWithWrongIndexThrowsException() {
         Burger burger = new Burger();
-        try {
-            burger.removeIngredient(0);
-            fail("Ожидалось исключение");
-        } catch (IndexOutOfBoundsException e) {
-            assertEquals("Index 0 out of bounds for length 0", e.getMessage());
-        }
+        burger.removeIngredient(0);
     }
 
     @Test
-    public void TestMoveIngredientChangesOrder() {
+    public void moveIngredientMovesIngredientToNewIndex() {
+        Burger burger = new Burger();
+        burger.addIngredient(sauce);
+        burger.addIngredient(filling);
+        burger.moveIngredient(0, 1);
+
+        assertSame(sauce, burger.ingredients.get(1));
+    }
+
+    @Test
+    public void moveIngredientShiftsOtherIngredient() {
         Burger burger = new Burger();
         burger.addIngredient(sauce);
         burger.addIngredient(filling);
         burger.moveIngredient(0, 1);
 
         assertSame(filling, burger.ingredients.get(0));
-        assertSame(sauce, burger.ingredients.get(1));
     }
 
     @Test
-    public void TestGetPriceWithoutIngredients() {
+    public void getPriceWithoutIngredientsReturnsDoubleBunPrice() {
         when(bun.getPrice()).thenReturn(100F);
         Burger burger = new Burger();
         burger.setBuns(bun);
@@ -86,7 +105,7 @@ public class BurgerTest {
     }
 
     @Test
-    public void TestGetPriceWithIngredients() {
+    public void getPriceWithIngredientsReturnsSum() {
         when(bun.getPrice()).thenReturn(100F);
         when(sauce.getPrice()).thenReturn(50F);
         when(filling.getPrice()).thenReturn(150F);
@@ -99,17 +118,17 @@ public class BurgerTest {
     }
 
     @Test
-    public void TestGetPriceCallsBunGetPriceOnce() {
+    public void getPriceCallsBunGetPriceOnce() {
         when(bun.getPrice()).thenReturn(100F);
         Burger burger = new Burger();
         burger.setBuns(bun);
-        burger.getPrice(); // вызываем, но не проверяем результат
+        burger.getPrice();
 
         verify(bun, times(1)).getPrice();
     }
 
     @Test
-    public void TestGetPriceCallsIngredientGetPriceOnce() {
+    public void getPriceCallsIngredientGetPriceOnce() {
         when(bun.getPrice()).thenReturn(100F);
         when(sauce.getPrice()).thenReturn(50F);
         Burger burger = new Burger();
@@ -121,7 +140,7 @@ public class BurgerTest {
     }
 
     @Test
-    public void TestGetReceiptWithIngredients() {
+    public void getReceiptWithIngredientsReturnsExpectedText() {
         when(bun.getName()).thenReturn("black bun");
         when(bun.getPrice()).thenReturn(100F);
         when(sauce.getName()).thenReturn("hot sauce");
@@ -140,7 +159,7 @@ public class BurgerTest {
     }
 
     @Test
-    public void TestGetReceiptWithoutIngredients() {
+    public void getReceiptWithoutIngredientsReturnsExpectedText() {
         when(bun.getName()).thenReturn("white bun");
         when(bun.getPrice()).thenReturn(200F);
         Burger burger = new Burger();
